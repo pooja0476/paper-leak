@@ -57,3 +57,15 @@ Its score increased by 20.67 marks.
 ## Note
 
 The datasets contain fictional sample examination records for project testing.
+## Dashboard Integration (Member 4)
+
+The following CSV files are available for dashboard use:
+
+1. centre_metrics.csv – Centre-wise average score, standard deviation, student count, and top-scorer percentage.
+2. anomaly_results.csv – Anomaly score and anomaly flag for each centre.
+3. historical_comparison.csv – Historical average, current average, score change, and unusual change flag.
+4. repeated_patterns.csv – Repeated unusual pattern indicators for each centre.
+
+Each result is linked using centre_id.
+
+The dashboard should use these outputs to display centre performance and highlight unusual patterns for human review.
