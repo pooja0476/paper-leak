@@ -1,0 +1,32 @@
+[
+    {
+        "Alert ID": "ALERT-20261120-F415E2CB",
+        "Reference PDF": "sample.pdf",
+        "Suspicious PDF": "suspicious.pdf",
+        "Evidence Type": "PDF document comparison",
+        "Suspicious Question": "Explain the working of an operating system.",
+        "Closest Reference Question": "Explain the working of an operating system.",
+        "Similarity": 100.0,
+        "Status": "Possible match - Manual review required"
+    },
+    {
+        "Alert ID": null,
+        "Reference PDF": "sample.pdf",
+        "Suspicious PDF": "suspicious.pdf",
+        "Evidence Type": "PDF document comparison",
+        "Suspicious Question": "What is Java programming?",
+        "Closest Reference Question": "What is Python programming?",
+        "Similarity": 40.21,
+        "Status": "No strong match"
+    },
+    {
+        "Alert ID": null,
+        "Reference PDF": "sample.pdf",
+        "Suspicious PDF": "suspicious.pdf",
+        "Evidence Type": "PDF document comparison",
+        "Suspicious Question": "Define computer networks.",
+        "Closest Reference Question": "Define database management system.",
+        "Similarity": 25.16,
+        "Status": "No strong match"
+    }
+]
