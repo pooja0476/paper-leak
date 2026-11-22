@@ -1,0 +1,23 @@
+[
+    {
+        "Alert ID": "ALERT-20261122-380078F0",
+        "Suspicious Question": "Explain the working of an operating",
+        "Closest Reference Question": "Explain the working of an operating system.",
+        "Similarity": 100.0,
+        "Status": "Possible match - Manual review required"
+    },
+    {
+        "Alert ID": null,
+        "Suspicious Question": "What is Java programming?",
+        "Closest Reference Question": "What is Python programming?",
+        "Similarity": 40.21,
+        "Status": "No strong match"
+    },
+    {
+        "Alert ID": null,
+        "Suspicious Question": "Define computer networks.",
+        "Closest Reference Question": "Define database management system.",
+        "Similarity": 25.16,
+        "Status": "No strong match"
+    }
+]
