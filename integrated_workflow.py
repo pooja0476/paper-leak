@@ -3,6 +3,8 @@ import re
 import json
 import uuid
 from datetime import datetime
+import cv2
+import numpy as np
 
 import pymupdf
 import pytesseract
@@ -21,22 +23,68 @@ pytesseract.pytesseract.tesseract_cmd = (
 # Extract text from an image
 def extract_image_text(image_path):
     image = Image.open(image_path)
-    image = image.resize((image.width * 2, image.height * 2))
 
-    # Convert image to grayscale
+    # Convert to grayscale
     image = ImageOps.grayscale(image)
+        # Convert image to OpenCV format
+    image_array = np.array(image)
 
-    # Improve contrast
-    image = ImageEnhance.Contrast(image).enhance(2)
+    # Detect text angle
+    _, thresh = cv2.threshold(
+        image_array, 0, 255,
+        cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
+    )
 
-    # Sharpen the image
-    image = image.filter(ImageFilter.SHARPEN)
+    coords = np.column_stack(np.where(thresh > 0))
+
+    if len(coords) > 0:
+        angle = cv2.minAreaRect(coords)[-1]
+
+        if angle < -45:
+            angle = -(90 + angle)
+        else:
+            angle = -angle
+
+        # Straighten the image
+        (h, w) = image_array.shape
+        center = (w // 2, h // 2)
+
+        matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+
+        image_array = cv2.warpAffine(
+            image_array,
+            matrix,
+            (w, h),
+            flags=cv2.INTER_CUBIC,
+            borderMode=cv2.BORDER_CONSTANT,
+            borderValue=255
+        )
+
+    # Convert back to PIL image
+    image = Image.fromarray(image_array)
+
+    # Improve contrast automatically
+    image = ImageOps.autocontrast(image)
+
+    # Increase image resolution
+    image = image.resize(
+        (image.width * 3, image.height * 3),
+        Image.Resampling.LANCZOS
+    )
+
+    # Reduce image noise
+    image = image.filter(ImageFilter.MedianFilter(size=3))
+
+    # Improve sharpness
+    image = ImageEnhance.Sharpness(image).enhance(2)
 
     # Extract text using OCR
-    text = pytesseract.image_to_string(image, config="--oem 3 --psm 6")
+    text = pytesseract.image_to_string(
+        image,
+        config="--oem 3 --psm 11"
+    )
 
     return text
-
 
 # Extract text from a PDF
 def extract_pdf_text(pdf_path):
@@ -215,6 +263,10 @@ def run_workflow():
     # Extract individual questions
     reference_questions = extract_questions_from_text(reference_text)
     suspicious_questions = extract_questions_from_text(suspicious_text)
+    if not suspicious_questions:
+        print("\nPoor image quality or no questions detected!")
+        print("Please upload a clearer image or PDF.")
+        return
     
 
     print("\nReference questions found:", len(reference_questions))
