@@ -1,0 +1,18 @@
+member1/.env
+.venv/
+*.session
+*.session-journal
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local evidence database
+member1/data/evidence.db
+
+# Downloaded evidence files
+member1/data/evidence/*
+!member1/data/evidence/.keep
+
+# Generated integrity report
+member1/data/evidence_integrity_report.csv
