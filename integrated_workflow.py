@@ -33,7 +33,7 @@ def extract_image_text(image_path):
     image = image.filter(ImageFilter.SHARPEN)
 
     # Extract text using OCR
-    text = pytesseract.image_to_string(image)
+    text = pytesseract.image_to_string(image, config="--oem 3 --psm 6")
 
     return text
 
@@ -66,17 +66,18 @@ def extract_text(file_path):
 def extract_questions_from_text(text):
 
     questions = re.findall(
-        r'(?im)^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+\s*[.)])\s*(.*?)(?=^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+\s*[.)])\s*|$)',
+        r'(?m)^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+\s*[.)])\s*(.*?)(?=^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+\s*[.)])\s*|\Z)',
         text,
         re.S
     )
 
     return [
-        q.strip().replace("\n", " ")
+        re.sub(r'\s+', ' ', q).strip()
         for q in questions if q.strip()
     ]
+    
     # Compare suspicious questions with reference questions
-def compare_questions(reference_questions, suspicious_questions):
+def compare_questions(reference_questions, suspicious_questions, reference_file, suspicious_file):
 
     if not reference_questions:
         raise ValueError("No reference questions found.")
@@ -90,6 +91,7 @@ def compare_questions(reference_questions, suspicious_questions):
     tfidf_matrix = vectorizer.fit_transform(all_questions)
 
     results = []
+    alerts = []
 
     for i, suspicious in enumerate(suspicious_questions):
 
@@ -121,45 +123,84 @@ def compare_questions(reference_questions, suspicious_questions):
             alert_id = None
 
         results.append({
+            "Reference File": reference_file,
+            "Suspicious File": suspicious_file,
+            "Detection Time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "Alert ID": alert_id,
             "Suspicious Question": suspicious,
             "Closest Reference Question": best_match,
-            "Similarity": round(best_score, 2),
+            "Similarity": float(round(best_score, 2)),
+            "Status": status
+        })
+        if alert_id is not None:
+            alerts.append({
+            "Alert ID": alert_id,
+            "Reference File": reference_file,
+            "Suspicious File": suspicious_file,
+            "Suspicious Question": suspicious,
+            "Closest Reference Question": best_match,
+            "Similarity": float(round(best_score, 2)),
             "Status": status
         })
 
-    return results
+    return results, alerts
     # Main integrated workflow
 def run_workflow():
 
     reference_file = input("Enter reference PDF filename: ")
     suspicious_file = input("Enter suspicious image/PDF filename: ")
+    reference_file = reference_file.strip().strip('"')
+    suspicious_file = suspicious_file.strip().strip('"')
 
-    if not os.path.exists(reference_file):
-        print("Reference file not found!")
+    if not os.path.isfile(reference_file):
+        print("Reference file not found! Please check the file path.")
         return
 
-    if not os.path.exists(suspicious_file):
-        print("Suspicious file not found!")
+    if not os.path.isfile(suspicious_file):
+        print("Suspicious file not found! Please check the file path.")
+        return
+    allowed_formats = [".pdf", ".png", ".jpg", ".jpeg"]
+
+    if os.path.splitext(reference_file)[1].lower() not in allowed_formats:
+        print("Unsupported reference file format!")
         return
 
-    # Extract reference paper text
-    reference_text = extract_text(reference_file)
+    if os.path.splitext(suspicious_file)[1].lower() not in allowed_formats:
+        print("Unsupported suspicious file format!")
+        return
 
-    # Extract suspicious document text
-    suspicious_text = extract_text(suspicious_file)
+    try:
+        reference_text = extract_text(reference_file)
+        suspicious_text = extract_text(suspicious_file)
 
-    print("\nText extraction completed!")
+    except Exception as e:
+        print("Error while processing files:", e)
+        return
+    
+    if not reference_text.strip():
+        print("No readable text found in reference file!")
+        return
 
+    if not suspicious_text.strip():
+        print("No readable text found in suspicious file!")
+        return
+        print("\nText extraction completed!")
+       
     # Extract individual questions
     reference_questions = extract_questions_from_text(reference_text)
     suspicious_questions = extract_questions_from_text(suspicious_text)
+    
 
     print("\nReference questions found:", len(reference_questions))
     print("Suspicious questions found:", len(suspicious_questions))
 
     # Compare questions
-    results = compare_questions(reference_questions, suspicious_questions)
+    results, alerts = compare_questions(
+    reference_questions,
+    suspicious_questions,
+    reference_file,
+    suspicious_file
+)
 
     # Display results
     for result in results:
@@ -168,6 +209,8 @@ def run_workflow():
     # Save results
     with open("integrated_results.json", "w", encoding="utf-8") as file:
         json.dump(results, file, indent=4)
+    with open("integrated_alerts.json", "w", encoding="utf-8") as file:
+        json.dump(alerts, file, indent=4)
 
     print("\nResults saved successfully in integrated_results.json")
 
