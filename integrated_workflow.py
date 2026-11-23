@@ -44,11 +44,30 @@ def extract_pdf_text(pdf_path):
     text = ""
 
     for page in pdf:
-        text += page.get_text() + "\n"
+        page_text = page.get_text()
+
+        if page_text.strip():
+            text += page_text + "\n"
+
+        else:
+            # Convert scanned PDF page into an image
+            pix = page.get_pixmap(matrix=pymupdf.Matrix(2, 2))
+            image = Image.frombytes(
+                "RGB",
+                [pix.width, pix.height],
+                pix.samples
+            )
+
+            # Extract text using Tesseract OCR
+            page_text = pytesseract.image_to_string(
+                image,
+                config="--oem 3 --psm 6"
+            )
+
+            text += page_text + "\n"
 
     pdf.close()
     return text
-
 
 # Extract text based on file type
 def extract_text(file_path):
@@ -64,6 +83,13 @@ def extract_text(file_path):
         raise ValueError("Unsupported file format")
         # Extract individual questions from text
 def extract_questions_from_text(text):
+
+    # Remove repeated page headings
+    text = re.sub(
+        r'(?im)^\s*(?:MODEL EXAMINATION PAPER|Subject\s*:\s*.*)\s*$',
+        '',
+        text
+    )
 
     questions = re.findall(
         r'(?m)^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+\s*[.)])\s*(.*?)(?=^\s*(?:Q(?:uestion)?\s*\.?\s*\d+|\d+\s*[.)])\s*|\Z)',

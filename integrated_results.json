@@ -1,18 +1,18 @@
 [
     {
         "Reference File": "sample.pdf",
-        "Suspicious File": "suspicious.pdf",
-        "Detection Time": "2026-11-23 12:40:12",
-        "Alert ID": "ALERT-20261123-3906112B",
-        "Suspicious Question": "Explain the working of an operating system.",
+        "Suspicious File": "scanned_pdf_test.pdf",
+        "Detection Time": "2026-11-23 13:19:46",
+        "Alert ID": null,
+        "Suspicious Question": "Explain the importance of computer networks.",
         "Closest Reference Question": "Explain the working of an operating system.",
-        "Similarity": 100.0,
-        "Status": "Possible match - Manual review required"
+        "Similarity": 23.68,
+        "Status": "No strong match"
     },
     {
         "Reference File": "sample.pdf",
-        "Suspicious File": "suspicious.pdf",
-        "Detection Time": "2026-11-23 12:40:12",
+        "Suspicious File": "scanned_pdf_test.pdf",
+        "Detection Time": "2026-11-23 13:19:46",
         "Alert ID": null,
         "Suspicious Question": "What is Java programming?",
         "Closest Reference Question": "What is Python programming?",
@@ -21,12 +21,12 @@
     },
     {
         "Reference File": "sample.pdf",
-        "Suspicious File": "suspicious.pdf",
-        "Detection Time": "2026-11-23 12:40:12",
+        "Suspicious File": "scanned_pdf_test.pdf",
+        "Detection Time": "2026-11-23 13:19:46",
         "Alert ID": null,
         "Suspicious Question": "Define computer networks.",
         "Closest Reference Question": "Define database management system.",
-        "Similarity": 25.16,
+        "Similarity": 28.96,
         "Status": "No strong match"
     }
 ]

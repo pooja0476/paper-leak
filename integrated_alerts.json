@@ -1,11 +1,1 @@
-[
-    {
-        "Alert ID": "ALERT-20261123-3906112B",
-        "Reference File": "sample.pdf",
-        "Suspicious File": "suspicious.pdf",
-        "Suspicious Question": "Explain the working of an operating system.",
-        "Closest Reference Question": "Explain the working of an operating system.",
-        "Similarity": 100.0,
-        "Status": "Possible match - Manual review required"
-    }
-]
+[]
