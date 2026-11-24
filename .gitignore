@@ -1,3 +1,25 @@
+
+# Python virtual environments
 venv/
+.venv/
+
+# Python cache files
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Member 1 environment secrets
+member1/.env
+
+# Telegram session files
+*.session
+*.session-journal
+
+# Local evidence database
+member1/data/evidence.db
+
+# Downloaded evidence files
+member1/data/evidence/*
+!member1/data/evidence/.keep
+
+# Generated integrity report
+member1/data/evidence_integrity_report.csv
