@@ -1,11 +1,17 @@
-member1/.env
+
+# Virtual environments
 .venv/
-*.session
-*.session-journal
+venv/
 
 # Python cache
 __pycache__/
 *.py[cod]
+*.pyc
+
+# Telegram credentials and sessions
+member1/.env
+*.session
+*.session-journal
 
 # Local evidence database
 member1/data/evidence.db

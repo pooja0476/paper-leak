@@ -1,0 +1,11 @@
+[
+    {
+        "Alert ID": "ALERT-20261123-F0AFB725",
+        "Reference File": "sample.pdf",
+        "Suspicious File": "test_questions.png",
+        "Suspicious Question": "Explain the working of an operating system.",
+        "Closest Reference Question": "Explain the working of an operating system.",
+        "Similarity": 100.0,
+        "Status": "Possible match - Manual review required"
+    }
+]
