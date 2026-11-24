@@ -180,20 +180,39 @@ async def main():
 
     for channel in channels:
 
-        print(f"\nCollecting initial messages from @{channel}")
+        print(f"\nCollecting initial messages from {channel}")
 
+    try:
+        # First, try to resolve a public channel
         try:
             entity = await client.get_entity(channel)
 
-            monitored_entities.append(entity)
+        except Exception:
+            # If it is private, search channels available in this account
+            entity = None
 
-            async for message in client.iter_messages(
-                entity,
-                limit=5
-            ):
-                await process_message(message, entity, channel)
+            async for dialog in client.iter_dialogs():
+                if (
+                    dialog.is_channel
+                    and dialog.name.strip().lower() == channel.strip().lower()
+                ):
+                    entity = dialog.entity
+                    break
 
-        except Exception as error:
+            if entity is None:
+                raise ValueError(
+                    f"Channel '{channel}' not found in your Telegram dialogs."
+                )
+
+        monitored_entities.append(entity)
+
+        async for message in client.iter_messages(
+            entity,
+            limit=5
+        ):
+            await process_message(message, entity, channel)
+
+    except Exception as error:
             print(f"Could not read @{channel}: {error}")
 
     # ======================================
@@ -238,17 +257,13 @@ async def main():
 # ==========================================
 
 if __name__ == "__main__":
-    while True:
-        try:
-            with client:
-                client.loop.run_until_complete(main())
+    try:
+        with client:
+            client.loop.run_until_complete(main())
 
-        except KeyboardInterrupt:
-            print("\nTelegram monitoring stopped.")
-            break
+    except KeyboardInterrupt:
+        print("\nTelegram monitoring stopped.")
 
-        except Exception as error:
-            print(f"\nTelegram connection error: {error}")
-            print("Retrying in 10 seconds...")
-            import time
-            time.sleep(10)
+    except Exception as error:
+        print(f"\nTelegram monitor stopped due to an error: {error}")
+        print("Check your internet connection and restart the script.")

@@ -1,18 +1,26 @@
 # Member 1 – Telegram Monitoring & Evidence Collection
 
 ## Overview
-This module collects messages and media from configured public Telegram channels for the Paper-Leak Sentinel project. It stores evidence metadata and supports file-integrity verification.
+This module monitors configured Telegram channels and collects messages and shared files that may contain leaked examination papers or related information.
 
 ## Features
-- Telegram API integration using Telethon.
-- Monitoring of configured Telegram channels.
-- Initial collection of recent messages.
-- Continuous monitoring for new messages.
-- Image and PDF attachment collection.
-- SHA-256 hash generation for downloaded media.
-- SQLite database for evidence metadata.
-- Evidence integrity verification.
-- CSV report generation.
+- Telegram authentication using Telethon.
+- Monitors configured public channels and accessible private channels.
+- Collects existing messages when monitoring starts.
+- Continuously listens for newly received messages.
+- Downloads image and PDF attachments.
+- Stores message details and evidence metadata in an SQLite database.
+- Calculates SHA-256 hashes for downloaded files.
+- Verifies evidence file integrity by comparing stored and recalculated hashes.
+- Generates a CSV integrity verification report.
+
+## Technologies Used
+- Python
+- Telethon
+- SQLite
+- Python-dotenv
+- SHA-256 hashing
+- CSV
 
 ## Project Structure
 ```text
@@ -31,48 +39,47 @@ member1/
     └── verify_evidence.py
 ```
 
-## Technologies Used
-- Python
-- Telethon
-- SQLite
-- SHA-256
-- CSV
-- python-dotenv
+## How to Run
 
-## Setup
-1. Install the project dependencies:
-   `pip install telethon python-dotenv`
-2. Configure Telegram API credentials in `member1/.env`:
-   - `API_ID`
-   - `API_HASH`
-3. Add authorized public Telegram channel usernames to `channels.txt`, one per line.
-
-## Run Telegram Monitoring
-From the project root:
+1. Install the required dependencies.
+2. Configure Telegram API credentials in `member1/.env`.
+3. Add channel usernames or accessible private channel names to `member1/channels.txt`.
+4. Start the monitor from the project root:
 
 ```bash
 python member1/src/telegram_monitor.py
 ```
 
-## Verify Evidence Integrity
+5. Stop monitoring using `Ctrl + C`.
+
+## Evidence Integrity Verification
+
 Run:
 
 ```bash
 python member1/src/verify_evidence.py
 ```
 
-The utility compares the stored SHA-256 hashes with the hashes recalculated from downloaded files.
+The script checks downloaded evidence files against their stored SHA-256 hashes and generates:
 
-## Output
-- Downloaded media files in `data/evidence/`.
-- Evidence metadata in `data/evidence.db`.
-- Integrity verification results in `data/evidence_integrity_report.csv`.
+`member1/data/evidence_integrity_report.csv`
+
+## Testing Performed
+- Telegram authentication and connection: Successful.
+- Configured channel access: Successful.
+- Existing message collection: Successful.
+- Real-time new message detection: Successful.
+- PDF download: Successful.
+- SHA-256 hash generation: Successful.
+- Evidence integrity verification: 9 files verified, 0 failures in the recorded test.
+- Continuous monitoring startup: Successful.
 
 ## Security
-- Keep `.env` and Telegram session files private.
-- Never upload API credentials or session files to GitHub.
-- Use only public channels or channels you are authorized to monitor.
-- Treat collected posts as unverified evidence until independently validated.
+- Telegram API credentials are stored in `.env`.
+- Session files, databases, and downloaded evidence are excluded from Git.
+- Evidence files are verified using SHA-256 hashes.
 
-## Module Responsibility
-Member 1 is responsible for Telegram monitoring, evidence collection, media downloading, hash generation, database storage, and evidence integrity reporting.
+## Responsibility
+Member 1 is responsible for Telegram monitoring, message collection, media downloading, evidence storage, and evidence integrity verification.
+
+**Note:** SHA-256 verification confirms that a downloaded file has not changed since its recorded hash was stored. It does not independently establish the authenticity of the original Telegram content.
