@@ -22,3 +22,7 @@ member1/data/evidence/*
 
 # Generated integrity report
 member1/data/evidence_integrity_report.csv
+
+# Member 4 frontend dependencies and build output
+Member4/node_modules/
+Member4/dist/
