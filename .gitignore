@@ -26,3 +26,21 @@ member1/data/evidence_integrity_report.csv
 # Member 4 frontend dependencies and build output
 Member4/node_modules/
 Member4/dist/
+
+# Local backup files
+Member4/*.backup.jsx
+Member4/*.pre_api_backup.jsx
+
+# Generated integration outputs (keep local)
+integrated_alerts.json
+integrated_results.json
+telegram_ocr_alerts.json
+telegram_ocr_results.json
+
+# Local runtime data
+*.db
+.env
+
+# Backups inside Member 4 source folders
+Member4/**/*.backup.jsx
+Member4/**/*.pre_api_backup.jsx
