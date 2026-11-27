@@ -76,6 +76,7 @@ def run_telegram_ocr():
             evidence_id,
             channel_name,
             message_id,
+            message_link,
             media_path,
             media_type,
             sha256_hash
@@ -174,12 +175,14 @@ def run_telegram_ocr():
                 result["Evidence ID"] = evidence_id
                 result["Telegram Channel"] = record["channel_name"]
                 result["Telegram Message ID"] = record["message_id"]
+                result["Telegram Message Link"] = record["message_link"]
                 result["Evidence SHA-256"] = stored_hash
 
             for alert in alerts:
                 alert["Evidence ID"] = evidence_id
                 alert["Telegram Channel"] = record["channel_name"]
                 alert["Telegram Message ID"] = record["message_id"]
+                alert["Telegram Message Link"] = record["message_link"]
                 alert["Evidence SHA-256"] = stored_hash
 
             all_results.extend(results)
